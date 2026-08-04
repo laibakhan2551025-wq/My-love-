@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For My Love — I'm Sorry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Dancing+Script:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ============ EDIT THIS TO PERSONALIZE ============ */
+  /* Search for "YOUR_NAME" and "HIS_NAME" further down in the JS/HTML to add your names. */
+
+  :root{
+    --midnight:#241b2f;
+    --twilight:#3a2a4d;
+    --twilight-2:#54355e;
+    --blush:#f7c6d9;
+    --tulip-red:#e0466e;
+    --tulip-red-dark:#b93058;
+    --tulip-gold:#f4a949;
+    --tulip-purple:#b083c9;
+    --cream:#fbeee9;
+    --leaf:#4f7a5c;
+    --leaf-light:#6fa07d;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html,body{ height:100%; }
+
+  body{
+    font-family:'Poppins', sans-serif;
+    background: radial-gradient(ellipse at top, var(--twilight-2), var(--midnight) 70%);
+    color: var(--cream);
+    overflow:hidden;
+    position:relative;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,h2,h3, .display{
+    font-family:'Playfair Display', serif;
+  }
+
+  .script{
+    font-family:'Dancing Script', cursive;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  }
+
+  /* ============ BACKGROUND: STARS + PETALS ============ */
+  #stars{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+  }
+  .star{
+    position:absolute; width:2px; height:2px; background:#fff; border-radius:50%;
+    opacity:.6; animation:twinkle 3s ease-in-out infinite;
+  }
+  @keyframes twinkle{ 0%,100%{opacity:.15;} 50%{opacity:.9;} }
+
+  #petals{
+    position:fixed; inset:0; z-index:5; pointer-events:none; overflow:hidden;
+  }
+  .petal{
+    position:absolute; top:-5%;
+    border-radius: 0 100% 0 100%;
+    opacity:.85;
+    animation-name: fall, sway;
+    animation-timing-function: linear, ease-in-out;
+    animation-iteration-count: infinite, infinite;
+  }
+  @keyframes fall{ from{ transform: translateY(-10vh) rotate(0deg);} to{ transform: translateY(110vh) rotate(360deg);} }
+  @keyframes sway{ 0%,100%{ margin-left:0; } 50%{ margin-left:40px; } }
+
+  /* ============ HILLS SILHOUETTE ============ */
+  .hills{
+    position:fixed; bottom:0; left:0; width:100%; height:22vh; z-index:1; pointer-events:none;
+  }
+  .hill{
+    position:absolute; bottom:0; width:140%; left:-20%;
+    border-radius:50% 50% 0 0 / 100% 100% 0 0;
+  }
+  .hill-1{ height:100%; background: var(--twilight-2); opacity:.55; }
+  .hill-2{ height:70%; background: var(--midnight); opacity:.85; }
+
+  /* ============ BOOK / PAGES ============ */
+  .book{
+    position:relative; z-index:10; height:100vh; width:100vw;
+  }
+  .page{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding: 8vh 6vw 14vh;
+    text-align:center;
+    opacity:0; visibility:hidden;
+    transform: translateX(40px) scale(.98);
+    transition: opacity .7s ease, transform .7s ease, visibility .7s;
+  }
+  .page.active{
+    opacity:1; visibility:visible; transform: translateX(0) scale(1);
+  }
+  .page.leaving{
+    transform: translateX(-40px) scale(.98);
+  }
+
+  .eyebrow{
+    letter-spacing:.35em; text-transform:uppercase; font-size:.68rem;
+    color: var(--blush); opacity:.75; margin-bottom:1.1rem; font-weight:500;
+  }
+
+  /* ---------- PAGE 1: COVER ---------- */
+  #page-cover .display{
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    font-weight:600;
+    line-height:1.15;
+    max-width:14ch;
+  }
+  .cover-sub{
+    margin-top:1rem; font-weight:300; color:var(--blush); font-size:1.05rem; opacity:.9;
+  }
+  .envelope-wrap{ margin: 3.2rem 0 1rem; cursor:pointer; }
+  .envelope{
+    width:150px; height:100px; position:relative; margin:0 auto;
+    filter: drop-shadow(0 10px 25px rgba(0,0,0,.4));
+  }
+  .env-body{
+    position:absolute; inset:0; background: linear-gradient(160deg, var(--blush), #fff2f6);
+    border-radius:6px;
+  }
+  .env-flap{
+    position:absolute; top:0; left:0; width:0; height:0;
+    border-left:75px solid transparent;
+    border-right:75px solid transparent;
+    border-top:56px solid var(--tulip-red);
+    transform-origin: top center;
+    transition: transform .6s cubic-bezier(.6,-0.2,.3,1.4);
+    filter: drop-shadow(0 3px 4px rgba(0,0,0,.25));
+  }
+  .envelope.open .env-flap{ transform: rotateX(180deg); }
+  .env-heart{
+    position:absolute; bottom:30px; left:50%; transform:translateX(-50%);
+    font-size:1.3rem; color:var(--tulip-red-dark);
+  }
+  .tap-hint{ font-size:.8rem; margin-top:1.4rem; color:var(--cream); opacity:.55; letter-spacing:.05em; }
+
+  /* ---------- BUTTONS ---------- */
+  .btn{
+    font-family:'Poppins', sans-serif; font-weight:500; letter-spacing:.03em;
+    background: linear-gradient(135deg, var(--tulip-red), var(--tulip-red-dark));
+    color:#fff; border:none; padding:.85rem 2.1rem; border-radius:999px;
+    cursor:pointer; font-size:.95rem;
+    box-shadow: 0 8px 20px rgba(224,70,110,.35);
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  .btn:hover{ transform: translateY(-3px); box-shadow: 0 12px 26px rgba(224,70,110,.5); }
+  .btn:active{ transform: translateY(-1px); }
+  .btn.ghost{
+    background:transparent; border:1px solid rgba(251,238,233,.4); box-shadow:none; color: var(--cream);
+  }
+
+  /* ---------- PAGE 2: LETTER ---------- */
+  .letter-card{
+    max-width: 620px; width:100%;
+    background: rgba(251,238,233,.06);
+    border: 1px solid rgba(251,238,233,.15);
+    backdrop-filter: blur(6px);
+    border-radius: 18px;
+    padding: 2.4rem 2.2rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,.35);
+  }
+  .letter-title{ font-size: clamp(1.5rem,4vw,2.1rem); font-weight:600; margin-bottom:1.1rem; }
+  #letter-text{
+    font-size: 1.05rem; line-height:1.85; font-weight:300; text-align:left;
+    min-height: 220px; white-space:pre-wrap;
+  }
+  #letter-text .cursor{
+    display:inline-block; width:2px; height:1em; background:var(--blush);
+    animation: blink 1s step-start infinite; vertical-align:-2px;
+  }
+  @keyframes blink{ 50%{ opacity:0; } }
+  .signature{
+    margin-top:1.4rem; text-align:right; font-size:1.6rem; color:var(--blush);
+  }
+
+  /* ---------- PAGE 3: GARDEN ---------- */
+  .garden-title{ font-size: clamp(1.5rem,4vw,2.2rem); font-weight:600; margin-bottom:.4rem; }
+  .garden-sub{ font-weight:300; color:var(--blush); opacity:.85; margin-bottom:2.2rem; font-size:.95rem; }
+  .garden{
+    display:flex; gap: 2.4rem; flex-wrap:wrap; justify-content:center; max-width:780px;
+  }
+  .tulip{
+    cursor:pointer; width:78px; text-align:center; position:relative; user-select:none;
+  }
+  .tulip-flower{
+    width:52px; height:52px; margin:0 auto 6px; position:relative;
+    transition: transform .4s cubic-bezier(.6,-0.2,.3,1.4);
+  }
+  .tulip:hover .tulip-flower{ transform: translateY(-6px) scale(1.08); }
+  .petal-half{
+    position:absolute; width:26px; height:40px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    bottom:0; transition: transform .5s cubic-bezier(.6,-0.2,.3,1.4), opacity .5s;
+  }
+  .petal-half.l{ left:2px; transform-origin:bottom right; }
+  .petal-half.r{ right:2px; transform-origin:bottom left; }
+  .petal-half.c{ left:13px; width:26px; z-index:2; }
+  .tulip.bloomed .petal-half.l{ transform: rotate(-38deg) translateX(-4px); }
+  .tulip.bloomed .petal-half.r{ transform: rotate(38deg) translateX(4px); }
+  .tulip.bloomed .petal-half.c{ transform: translateY(-4px) scale(1.05); }
+  .tulip-stem{
+    width:3px; height:34px; background: var(--leaf-light); margin:0 auto;
+    border-radius:2px;
+  }
+  .tulip-leaf{
+    width:16px; height:8px; background: var(--leaf); display:inline-block;
+    border-radius: 0 100% 0 100%; position:relative; top:-6px;
+  }
+  .tulip-label{ font-size:.72rem; opacity:.6; margin-top:.3rem; letter-spacing:.03em; }
+
+  .note-popup{
+    position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center;
+    background: rgba(20,14,26,.72); backdrop-filter: blur(3px);
+    opacity:0; pointer-events:none; transition: opacity .35s ease;
+    padding: 2rem;
+  }
+  .note-popup.show{ opacity:1; pointer-events:auto; }
+  .note-card{
+    max-width: 420px; background: linear-gradient(160deg, #fff6f2, var(--blush));
+    color: var(--midnight); border-radius: 20px; padding: 2.2rem 2rem;
+    text-align:center; transform: scale(.85); transition: transform .35s cubic-bezier(.6,-0.2,.3,1.4);
+    box-shadow: 0 25px 60px rgba(0,0,0,.5);
+  }
+  .note-popup.show .note-card{ transform: scale(1); }
+  .note-card p{ font-size:1.18rem; line-height:1.6; font-family:'Dancing Script', cursive; font-weight:600; }
+  .note-close{
+    margin-top:1.4rem; background:var(--tulip-red); color:#fff; border:none;
+    padding:.55rem 1.5rem; border-radius:999px; cursor:pointer; font-family:'Poppins',sans-serif; font-size:.85rem;
+  }
+
+  /* ---------- PAGE 4: PROMISES ---------- */
+  .promise-title{ font-size: clamp(1.5rem,4vw,2.2rem); font-weight:600; margin-bottom:2rem; }
+  .promises{ list-style:none; max-width:520px; width:100%; text-align:left; }
+  .promises li{
+    display:flex; align-items:flex-start; gap:.8rem; margin-bottom:1.1rem;
+    opacity:0; transform: translateY(14px);
+    transition: opacity .6s ease, transform .6s ease;
+    font-weight:300; font-size:1.02rem; line-height:1.5;
+  }
+  .promises li.show{ opacity:1; transform:translateY(0); }
+  .promise-icon{
+    flex-shrink:0; width:24px; height:24px; border-radius:50%;
+    background: var(--tulip-gold); color:var(--midnight); font-size:.75rem;
+    display:flex; align-items:center; justify-content:center; margin-top:2px; font-weight:700;
+  }
+
+  /* ---------- PAGE 5: SURPRISE ---------- */
+  .surprise-pre{ font-weight:300; color: var(--blush); margin-bottom:2rem; max-width:40ch; }
+  .heart-btn{
+    width:120px; height:120px; position:relative; cursor:pointer; margin-bottom:1.4rem;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.07);} }
+  .heart-btn svg{ width:100%; height:100%; filter: drop-shadow(0 8px 20px rgba(224,70,110,.5)); }
+  .final-msg{
+    max-width:560px; opacity:0; transform: translateY(20px) scale(.95);
+    transition: opacity .8s ease, transform .8s ease;
+  }
+  .final-msg.show{ opacity:1; transform: translateY(0) scale(1); }
+  .final-msg h2{
+    font-size: clamp(1.8rem, 6vw, 3rem); color: var(--tulip-red); margin-bottom:1rem;
+    text-shadow: 0 0 30px rgba(224,70,110,.4);
+  }
+  .final-msg p{ font-weight:300; line-height:1.8; font-size:1.05rem; margin-bottom:.6rem; }
+  .final-sign{ margin-top:1.2rem; font-size:1.8rem; color:var(--blush); }
+
+  #confetti-layer{ position:fixed; inset:0; z-index:40; pointer-events:none; overflow:hidden; }
+  .confetto{
+    position:absolute; top:-5%; border-radius:2px;
+    animation: confetti-fall linear forwards;
+  }
+  @keyframes confetti-fall{
+    to{ transform: translateY(105vh) rotate(540deg); opacity:.2; }
+  }
+
+  #heart-burst{ position:fixed; inset:0; z-index:41; pointer-events:none; overflow:hidden; }
+  .flying-heart{
+    position:absolute; bottom:-5%; font-size:1.4rem; opacity:.9;
+    animation: rise linear forwards;
+  }
+  @keyframes rise{ to{ transform: translateY(-100vh) rotate(20deg); opacity:0; } }
+
+  /* ============ NAVIGATION ============ */
+  .nav-arrows{
+    position:fixed; z-index:20; top:50%; transform:translateY(-50%);
+    width:100%; display:flex; justify-content:space-between; padding:0 1.2rem;
+    pointer-events:none;
+  }
+  .arrow-btn{
+    pointer-events:auto; background: rgba(251,238,233,.08); border:1px solid rgba(251,238,233,.18);
+    color: var(--cream); width:42px; height:42px; border-radius:50%; cursor:pointer;
+    font-size:1.1rem; display:flex; align-items:center; justify-content:center;
+    transition: background .25s ease, transform .25s ease; opacity:.7;
+  }
+  .arrow-btn:hover{ background: rgba(251,238,233,.18); transform: scale(1.08); opacity:1; }
+  .arrow-btn:disabled{ opacity:.15; pointer-events:none; }
+
+  .dots{
+    position:fixed; bottom: 3.2vh; left:50%; transform:translateX(-50%);
+    display:flex; gap:.6rem; z-index:20;
+  }
+  .dot{
+    width:9px; height:9px; border-radius:50%; background: rgba(251,238,233,.3);
+    cursor:pointer; transition: background .3s ease, transform .3s ease;
+  }
+  .dot.active{ background: var(--tulip-red); transform: scale(1.3); }
+
+  @media (max-width:560px){
+    .garden{ gap:1.2rem; }
+    .tulip{ width:64px; }
+    .letter-card{ padding:1.6rem 1.3rem; }
+    .arrow-btn{ width:36px; height:36px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+<div id="petals"></div>
+<div class="hills">
+  <div class="hill hill-1"></div>
+  <div class="hill hill-2"></div>
+</div>
+
+<div id="confetti-layer"></div>
+<div id="heart-burst"></div>
+
+<div class="book" id="book">
+
+  <!-- PAGE 1 — COVER -->
+  <section class="page active" id="page-cover">
+    <div class="eyebrow">A little something for you</div>
+    <h1 class="display">I made a whole website<br>just to say I'm sorry.</h1>
+    <p class="cover-sub">Open it when you're ready, <span id="his-name">love</span>.</p>
+    <div class="envelope-wrap" id="envelope-wrap">
+      <div class="envelope" id="envelope">
+        <div class="env-body"></div>
+        <div class="env-heart">♥</div>
+        <div class="env-flap"></div>
+      </div>
+    </div>
+    <div class="tap-hint">tap the envelope to open</div>
+  </section>
+
+  <!-- PAGE 2 — THE LETTER -->
+  <section class="page" id="page-letter">
+    <div class="eyebrow">My Letter To You</div>
+    <div class="letter-card">
+      <div class="letter-title">I'm sorry.</div>
+      <div id="letter-text"></div>
+      <div class="signature script">— always yours</div>
+    </div>
+  </section>
+
+  <!-- PAGE 3 — GARDEN OF REASONS -->
+  <section class="page" id="page-garden">
+    <div class="eyebrow">Tap a Tulip</div>
+    <div class="garden-title">A garden I grew for you</div>
+    <div class="garden-sub">Every flower is holding something I want you to know.</div>
+    <div class="garden" id="garden"></div>
+  </section>
+
+  <!-- PAGE 4 — PROMISES -->
+  <section class="page" id="page-promise">
+    <div class="eyebrow">My Promise</div>
+    <div class="promise-title">Here's what I'm promising you</div>
+    <ul class="promises" id="promise-list"></ul>
+  </section>
+
+  <!-- PAGE 5 — SURPRISE -->
+  <section class="page" id="page-surprise">
+    <div class="eyebrow">One Last Thing</div>
+    <p class="surprise-pre">There's a surprise waiting for you. Tap the heart.</p>
+    <div class="heart-btn" id="heart-btn">
+      <svg viewBox="0 0 32 29" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#e0466e" d="M23.6 0c-3.4 0-6.3 2-7.6 4.9C14.7 2 11.8 0 8.4 0 3.8 0 0 3.8 0 8.4c0 9.4 16 20.6 16 20.6s16-11.2 16-20.6C32 3.8 28.2 0 23.6 0z"/>
+      </svg>
+    </div>
+    <div class="final-msg" id="final-msg">
+      <h2 class="script">I love you so much.</h2>
+      <p>More than my pride, more than being right, more than any silly fight ever mattered.</p>
+      <p>I promise you — I won't get angry like that again. I'll choose us, every single time.</p>
+      <p>Thank you for loving me even when I make it hard. I don't take that for granted.</p>
+      <div class="final-sign script">Forever yours, YOUR_NAME</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="nav-arrows">
+  <button class="arrow-btn" id="prev-btn" aria-label="Previous page">‹</button>
+  <button class="arrow-btn" id="next-btn" aria-label="Next page">›</button>
+</div>
+
+<div class="dots" id="dots"></div>
+
+<div class="note-popup" id="note-popup">
+  <div class="note-card">
+    <p id="note-text"></p>
+    <button class="note-close" id="note-close">close</button>
+  </div>
+</div>
+
+<script>
+/* ===================================================================
+   PERSONALIZE ME:
+   - Change HIS_NAME below to his actual name.
+   - Change YOUR_NAME below to sign it as yourself.
+   - Edit LETTER_TEXT, REASONS, and PROMISES arrays with your own words.
+=================================================================== */
+const HIS_NAME  = "love";      // shown on the cover page
+const YOUR_NAME = "YOUR_NAME"; // shown as the final signature
+
+document.getElementById('his-name').textContent = HIS_NAME;
+document.querySelector('.final-sign').innerHTML =
+  'Forever yours, ' + (YOUR_NAME === "YOUR_NAME" ? "me" : YOUR_NAME);
+
+const LETTER_TEXT =
+`I keep replaying it in my head, and every time, I just feel sorry.
+
+I let my anger speak louder than my love, and that's never okay — you deserve so much better than that.
+
+You didn't deserve the way I acted. You deserved patience, softness, and someone who fights FOR you, not against you.
+
+I love you so much it scares me sometimes. And I promise — I will never let anger take over like that again. I'll pause, I'll breathe, I'll choose kindness. I'll choose us.
+
+Please forgive me. I'm still learning how to love you better, and I'm not going anywhere.`;
+
+const REASONS = [
+  "For every time you forgave me before I even deserved it.",
+  "For the way you say my name when you're happy.",
+  "For staying, even on my worst days.",
+  "For making ordinary days feel like something worth remembering.",
+  "For being the calm to my storm, always.",
+  "For loving me exactly as I am, still trying to be better.",
+  "For every hug that fixed what words couldn't.",
+  "For simply being you — my favorite person."
+];
+
+const PROMISES = [
+  "I promise to never let anger speak before love does.",
+  "I promise to talk it out, not shut you out.",
+  "I promise to say sorry the moment I know I'm wrong.",
+  "I promise to choose 'us' over my ego, every time.",
+  "I promise to hold your hand tighter, not let it go.",
+  "I promise to love you louder than I ever get upset."
+];
+
+/* ---------------- PAGE NAVIGATION ---------------- */
+const pages = ['page-cover','page-letter','page-garden','page-promise','page-surprise'];
+let current = 0;
+const bookEl = document.getElementById('book');
+const dotsEl = document.getElementById('dots');
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
+
+pages.forEach((id, i) => {
+  const dot = document.createElement('div');
+  dot.className = 'dot' + (i === 0 ? ' active' : '');
+  dot.addEventListener('click', () => goTo(i));
+  dotsEl.appendChild(dot);
+});
+
+function goTo(index){
+  if(index < 0 || index >= pages.length || index === current) return;
+  const from = document.getElementById(pages[current]);
+  const to = document.getElementById(pages[index]);
+  from.classList.remove('active');
+  from.classList.add('leaving');
+  setTimeout(()=> from.classList.remove('leaving'), 700);
+  to.classList.add('active');
+  current = index;
+  [...dotsEl.children].forEach((d,i)=> d.classList.toggle('active', i===current));
+  prevBtn.disabled = current === 0;
+  nextBtn.disabled = current === pages.length - 1;
+  onPageEnter(pages[current]);
+}
+prevBtn.addEventListener('click', ()=> goTo(current - 1));
+nextBtn.addEventListener('click', ()=> goTo(current + 1));
+prevBtn.disabled = true;
+
+let typed = false, gardenBuilt = false, promisesShown = false;
+
+function onPageEnter(id){
+  if(id === 'page-letter' && !typed){ typed = true; typeLetter(); }
+  if(id === 'page-garden' && !gardenBuilt){ gardenBuilt = true; buildGarden(); }
+  if(id === 'page-promise' && !promisesShown){ promisesShown = true; showPromises(); }
+}
+
+/* ---------------- ENVELOPE / COVER ---------------- */
+document.getElementById('envelope-wrap').addEventListener('click', () => {
+  const env = document.getElementById('envelope');
+  if(env.classList.contains('open')) return;
+  env.classList.add('open');
+  setTimeout(()=> goTo(1), 600);
+});
+
+/* ---------------- TYPEWRITER LETTER ---------------- */
+function typeLetter(){
+  const el = document.getElementById('letter-text');
+  el.innerHTML = '';
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+  let i = 0;
+  const speed = 22;
+  function step(){
+    if(i <= LETTER_TEXT.length){
+      el.textContent = LETTER_TEXT.slice(0, i);
+      el.appendChild(cursor);
+      i++;
+      setTimeout(step, speed);
+    } else {
+      cursor.remove();
+    }
+  }
+  step();
+}
+
+/* ---------------- GARDEN OF TULIPS ---------------- */
+const TULIP_COLORS = [
+  ['#e0466e','#b93058'], ['#f4a949','#d98a2e'], ['#b083c9','#8c5aa8'],
+  ['#f78fb0','#e0466e'], ['#f4a949','#e0466e'], ['#b083c9','#e0466e'],
+  ['#e0466e','#d98a2e'], ['#f78fb0','#8c5aa8']
+];
+function buildGarden(){
+  const garden = document.getElementById('garden');
+  REASONS.forEach((reason, i) => {
+    const [c1,c2] = TULIP_COLORS[i % TULIP_COLORS.length];
+    const t = document.createElement('div');
+    t.className = 'tulip';
+    t.innerHTML = `
+      <div class="tulip-flower">
+        <div class="petal-half l" style="background:${c1}"></div>
+        <div class="petal-half r" style="background:${c1}"></div>
+        <div class="petal-half c" style="background:${c2}"></div>
+      </div>
+      <div class="tulip-stem"></div>
+      <span class="tulip-leaf"></span>
+      <div class="tulip-label">bloom me</div>
+    `;
+    t.addEventListener('click', () => {
+      t.classList.add('bloomed');
+      t.querySelector('.tulip-label').textContent = 'bloomed';
+      setTimeout(()=> showNote(reason), 350);
+    });
+    garden.appendChild(t);
+  });
+}
+function showNote(text){
+  document.getElementById('note-text').textContent = text;
+  document.getElementById('note-popup').classList.add('show');
+}
+document.getElementById('note-close').addEventListener('click', ()=>{
+  document.getElementById('note-popup').classList.remove('show');
+});
+
+/* ---------------- PROMISES REVEAL ---------------- */
+function showPromises(){
+  const list = document.getElementById('promise-list');
+  PROMISES.forEach((p, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="promise-icon">✓</span><span>${p}</span>`;
+    list.appendChild(li);
+    setTimeout(()=> li.classList.add('show'), 250 + i * 220);
+  });
+}
+
+/* ---------------- SURPRISE FINALE ---------------- */
+document.getElementById('heart-btn').addEventListener('click', () => {
+  document.getElementById('final-msg').classList.add('show');
+  burstConfetti();
+  burstHearts();
+});
+
+function burstConfetti(){
+  const layer = document.getElementById('confetti-layer');
+  const colors = ['#e0466e','#f4a949','#b083c9','#f78fb0','#fbeee9'];
+  for(let i=0;i<70;i++){
+    const c = document.createElement('div');
+    c.className = 'confetto';
+    const size = 6 + Math.random()*6;
+    c.style.width = size+'px';
+    c.style.height = (size*0.4)+'px';
+    c.style.left = Math.random()*100+'vw';
+    c.style.background = colors[Math.floor(Math.random()*colors.length)];
+    const dur = 3 + Math.random()*2.5;
+    c.style.animationDuration = dur+'s';
+    c.style.animationDelay = (Math.random()*0.6)+'s';
+    layer.appendChild(c);
+    setTimeout(()=> c.remove(), (dur+1)*1000);
+  }
+}
+function burstHearts(){
+  const layer = document.getElementById('heart-burst');
+  const glyphs = ['💗','💕','🌷','💖'];
+  for(let i=0;i<26;i++){
+    const h = document.createElement('div');
+    h.className = 'flying-heart';
+    h.textContent = glyphs[Math.floor(Math.random()*glyphs.length)];
+    h.style.left = Math.random()*100+'vw';
+    const dur = 4 + Math.random()*3;
+    h.style.animationDuration = dur+'s';
+    h.style.animationDelay = (Math.random()*1.2)+'s';
+    h.style.fontSize = (1 + Math.random()*1.2)+'rem';
+    layer.appendChild(h);
+    setTimeout(()=> h.remove(), (dur+1.5)*1000);
+  }
+}
+
+/* ---------------- AMBIENT BACKGROUND ---------------- */
+function buildStars(){
+  const s = document.getElementById('stars');
+  for(let i=0;i<70;i++){
+    const st = document.createElement('div');
+    st.className = 'star';
+    st.style.left = Math.random()*100+'vw';
+    st.style.top = Math.random()*70+'vh';
+    st.style.animationDelay = (Math.random()*3)+'s';
+    s.appendChild(st);
+  }
+}
+function buildPetals(){
+  const layer = document.getElementById('petals');
+  const colors = ['#e0466e','#f78fb0','#f4a949','#b083c9'];
+  for(let i=0;i<18;i++){
+    const p = document.createElement('div');
+    p.className = 'petal';
+    const size = 8 + Math.random()*10;
+    p.style.width = size+'px';
+    p.style.height = (size*0.8)+'px';
+    p.style.left = Math.random()*100+'vw';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    const fallDur = 9 + Math.random()*10;
+    const swayDur = 2.5 + Math.random()*2;
+    p.style.animationDuration = fallDur+'s, '+swayDur+'s';
+    p.style.animationDelay = (-Math.random()*fallDur)+'s, 0s';
+    p.style.opacity = 0.5 + Math.random()*0.4;
+    layer.appendChild(p);
+  }
+}
+buildStars();
+buildPetals();
+
+/* ---------------- KEYBOARD NAV ---------------- */
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'ArrowRight') goTo(current+1);
+  if(e.key === 'ArrowLeft') goTo(current-1);
+});
+</script>
+</body>
+</html>
